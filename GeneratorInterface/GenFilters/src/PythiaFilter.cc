@@ -104,30 +104,30 @@ bool PythiaFilter::filter(edm::StreamID, edm::Event& iEvent, const edm::EventSet
     accepted = true;
   }
 
-	if (processID == 0 || processID == myGenEvent->signal_process_id()) {
+if (processID == 0 || processID == myGenEvent->signal_process_id()) {
     for (HepMC::GenEvent::particle_const_iterator p = myGenEvent->particles_begin(); p != myGenEvent->particles_end();
        ++p) {
-			if ((*p)->pdg_id() != particleID)
-				continue;
-			int ndauac = 0;
-			int ndau = 0;
-			if ((*p)->end_vertex()) {
-				for (HepMC::GenVertex::particle_iterator des = (*p)->end_vertex()->particles_begin(HepMC::children);
-						 des != (*p)->end_vertex()->particles_end(HepMC::children);
-						 ++des) {
-					++ndau; 
-					for (unsigned int i = 0; i < dauIDs.size(); ++i) {
-						if ((*des)->pdg_id() != dauIDs[i])
-							accepted = false;
-					}
-					for (unsigned int i = 0; i < dauIDs.size(); ++i) {
-						if ((*des)->pdg_id() = dauIDs[i])
-							accepted = true;
-					}
-				}
+	if ((*p)->pdg_id() != particleID)
+		continue;
+	int ndauac = 0;
+	int ndau = 0;
+	if ((*p)->end_vertex()) {
+		for (HepMC::GenVertex::particle_iterator des = (*p)->end_vertex()->particles_begin(HepMC::children);
+				 des != (*p)->end_vertex()->particles_end(HepMC::children);
+				 ++des) {
+			++ndau; 
+			for (unsigned int i = 0; i < dauIDs.size(); ++i) {
+				if ((*des)->pdg_id() != dauIDs[i])
+					accepted = false;
+			}
+			for (unsigned int i = 0; i < dauIDs.size(); ++i) {
+				if ((*des)->pdg_id() = dauIDs[i])
+					accepted = true;
 			}
 		}
 	}
+    }
+}
 
   if (accepted) {
     return true;
