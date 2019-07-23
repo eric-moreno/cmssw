@@ -119,15 +119,16 @@ bool PythiaFilter::filter(edm::StreamID, edm::Event& iEvent, const edm::EventSet
 					for (unsigned int i = 0; i < dauIDs.size(); ++i) {
 						if ((*des)->pdg_id() != dauIDs[i])
 							accepted = false;
-        	}
+					}
 					for (unsigned int i = 0; i < dauIDs.size(); ++i) {
 						if ((*des)->pdg_id() = dauIDs[i])
 							accepted = true;
 					}
-      	}
+				}
 			}
 		}
 	}
+
   if (accepted) {
     return true;
   } else {
