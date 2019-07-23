@@ -48,6 +48,7 @@ private:
   // ----------member data ---------------------------
 
   const edm::EDGetTokenT<edm::HepMCProduct> token_;
+  std::vector<int> dauIDs;
   const int particleID;
   const double minpcut;
   const double maxpcut;
@@ -59,7 +60,7 @@ private:
   const double maxrapcut;
   const double minphicut;
   const double maxphicut;
-
+  const int ndaughters;
   const int status;
   const int motherID;
   const int processID;
