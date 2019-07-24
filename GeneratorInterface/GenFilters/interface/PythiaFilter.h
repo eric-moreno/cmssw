@@ -60,11 +60,10 @@ private:
   const double maxrapcut;
   const double minphicut;
   const double maxphicut;
-  const int ndaughters;
   const int status;
   const int motherID;
   const int processID;
-
   const double betaBoost;
+  const int ndaughters;
 };
 #endif
