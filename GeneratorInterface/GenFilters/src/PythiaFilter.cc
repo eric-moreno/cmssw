@@ -109,7 +109,6 @@ bool PythiaFilter::filter(edm::StreamID, edm::Event& iEvent, const edm::EventSet
 	       ++p) {
 	    if ((*p)->pdg_id() != particleID)
 	      continue;
-	    int ndauac = 0;
 	    int ndau = 0;
 	    if ((*p)->end_vertex()) {
 	      for (HepMC::GenVertex::particle_iterator des = (*p)->end_vertex()->particles_begin(HepMC::children);
@@ -121,7 +120,7 @@ bool PythiaFilter::filter(edm::StreamID, edm::Event& iEvent, const edm::EventSet
 	            accepted = false;
 	        }
 	        for (unsigned int i = 0; i < dauIDs.size(); ++i) {
-	          if ((*des)->pdg_id() = dauIDs[i])
+	          if ((*des)->pdg_id() == dauIDs[i])
 		    accepted = true;
 	        }
 	      }
