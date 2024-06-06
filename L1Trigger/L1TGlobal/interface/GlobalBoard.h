@@ -39,9 +39,11 @@
 // Objects to produce for the output record.
 #include "DataFormats/L1TGlobal/interface/GlobalAlgBlk.h"
 #include "DataFormats/L1TGlobal/interface/GlobalExtBlk.h"
+#include "DataFormats/L1TGlobal/interface/AXOL1TLScore.h"
 
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EventSetup.h"
+
 
 // forward declarations
 class TriggerMenu;
@@ -88,6 +90,10 @@ namespace l1t {
                                      const bool receiveMuShower,
                                      const int nrL1MuShower);
 
+    void receiveAXOScore(const edm::Event&,
+			 const edm::EDGetTokenT<BXVector<AXOL1TLScore>>&, 
+			 const bool receiveAXOScore);
+    
     void receiveExternalData(const edm::Event&, const edm::EDGetTokenT<BXVector<GlobalExtBlk>>&, const bool receiveExt);
 
     /// initialize the class (mainly reserve)
@@ -138,6 +144,7 @@ namespace l1t {
     void resetMuonShower();
     void resetCalo();
     void resetExternal();
+    void resetAXO();
 
     /// print received Muon dataWord
     void printGmtData(const int iBxInEvent) const;
@@ -172,6 +179,9 @@ namespace l1t {
     /// pointer to External data list
     inline const BXVector<const GlobalExtBlk*>* getCandL1External() const { return m_candL1External; }
 
+    ///pointer to axo data list
+    inline const BXVector<const AXOL1TLScore*>* getCandL1AXOScore() const { return m_candAXOScore; }
+    
     /*  Drop individual EtSums for Now
     /// pointer to ETM data list
     inline const l1t::EtSum* getCandL1ETM() const
@@ -207,6 +217,9 @@ namespace l1t {
   public:
     inline void setVerbosity(const int verbosity) { m_verbosity = verbosity; }
 
+    //enable axo score saving
+    inline void enableAXOScoreSaving(bool savescore) { m_saveAXOScore = savescore; } 
+    
   private:
     // cached stuff
 
@@ -233,7 +246,7 @@ namespace l1t {
     BXVector<const l1t::EtSum*>* m_candL1EtSum;
     BXVector<const l1t::EtSum*>* m_candL1EtSumZdc;
     BXVector<const GlobalExtBlk*>* m_candL1External;
-
+    BXVector<const AXOL1TLScore*>* m_candAXOScore;
     //    BXVector<const l1t::EtSum*>* m_candETM;
     //    BXVector<const l1t::EtSum*>* m_candETT;
     //    BXVector<const l1t::EtSum*>* m_candHTM;
@@ -247,6 +260,10 @@ namespace l1t {
 
     GlobalAlgBlk m_uGtAlgBlk;
 
+    //for optional software-only saving of axol1tl score
+    float m_uGtBrdAXOScore = -999.0;
+    bool m_saveAXOScore = true;
+    
     // cache of maps
     std::vector<AlgorithmEvaluation::ConditionEvaluationMap> m_conditionResultMaps;
 

@@ -57,6 +57,8 @@ void L1TGlobalProducer::fillDescriptions(edm::ConfigurationDescriptions& descrip
       ->setComment(
           "InputTag for unpacked Algblk (required only if GetPrescaleColumnFromData orRequireMenuToMatchAlgoBlkInput "
           "set to true)");
+  desc.add<edm::InputTag>("AxoScoreInputTag", edm::InputTag(""))
+      ->setComment("InputTag for saving AXOL1TL NN scores (not required, should specify in config)");
   desc.add<bool>("GetPrescaleColumnFromData", false)
       ->setComment("Get prescale column from unpacked GlobalAlgBck. Otherwise use value specified in PrescaleSet");
   desc.add<bool>("AlgorithmTriggersUnprescaled", false)
@@ -71,6 +73,9 @@ void L1TGlobalProducer::fillDescriptions(edm::ConfigurationDescriptions& descrip
   // switch for muon showers in Run-3
   desc.add<bool>("useMuonShowers", false);
 
+  //switch for saving AXO score
+  desc.add<bool>("saveAxoScore", false);
+  
   // disables resetting the prescale counters each lumisection (needed for offline)
   //  originally, the L1T firmware applied the reset of prescale counters at the end of every LS;
   //  this reset was disabled in the L1T firmware starting from run-362658 (November 25th, 2022), see
@@ -107,7 +112,8 @@ L1TGlobalProducer::L1TGlobalProducer(const edm::ParameterSet& parSet)
       m_sumInputTag(parSet.getParameter<edm::InputTag>("EtSumInputTag")),
       m_sumZdcInputTag(parSet.getParameter<edm::InputTag>("EtSumZdcInputTag")),
       m_extInputTag(parSet.getParameter<edm::InputTag>("ExtInputTag")),
-
+      m_axoInputTag(parSet.getParameter<edm::InputTag>("AxoScoreInputTag")),
+      
       m_produceL1GtDaqRecord(parSet.getParameter<bool>("ProduceL1GtDaqRecord")),
       m_produceL1GtObjectMapRecord(parSet.getParameter<bool>("ProduceL1GtObjectMapRecord")),
 
@@ -130,7 +136,8 @@ L1TGlobalProducer::L1TGlobalProducer(const edm::ParameterSet& parSet)
       m_algoblkInputTag(parSet.getParameter<edm::InputTag>("AlgoBlkInputTag")),
       m_resetPSCountersEachLumiSec(parSet.getParameter<bool>("resetPSCountersEachLumiSec")),
       m_semiRandomInitialPSCounters(parSet.getParameter<bool>("semiRandomInitialPSCounters")),
-      m_useMuonShowers(parSet.getParameter<bool>("useMuonShowers")) {
+      m_useMuonShowers(parSet.getParameter<bool>("useMuonShowers")),
+      m_saveAxoScore(parSet.getParameter<bool>("saveAxoScore")){
   m_egInputToken = consumes<BXVector<EGamma>>(m_egInputTag);
   m_tauInputToken = consumes<BXVector<Tau>>(m_tauInputTag);
   m_jetInputToken = consumes<BXVector<Jet>>(m_jetInputTag);
@@ -139,6 +146,8 @@ L1TGlobalProducer::L1TGlobalProducer(const edm::ParameterSet& parSet)
   m_muInputToken = consumes<BXVector<Muon>>(m_muInputTag);
   if (m_useMuonShowers)
     m_muShowerInputToken = consumes<BXVector<MuonShower>>(m_muShowerInputTag);
+  if (m_saveAxoScore)
+    m_axoInputToken = consumes<BXVector<AXOL1TLScore>>(m_axoInputTag); 
   m_extInputToken = consumes<BXVector<GlobalExtBlk>>(m_extInputTag);
   m_l1GtStableParToken = esConsumes<L1TGlobalParameters, L1TGlobalParametersRcd>();
   m_l1GtMenuToken = esConsumes<L1TUtmTriggerMenu, L1TUtmTriggerMenuRcd>();
@@ -292,7 +301,7 @@ void L1TGlobalProducer::produce(edm::Event& iEvent, const edm::EventSetup& evSet
     // showers and out-of-time showers
     if (m_useMuonShowers)
       m_nrL1MuShower = 1;
-
+    
     // EG
     m_nrL1EG = data->numberL1EG();
 
@@ -521,6 +530,7 @@ void L1TGlobalProducer::produce(edm::Event& iEvent, const edm::EventSetup& evSet
   bool receiveEtSums = true;
   bool receiveEtSumsZdc = true;
   bool receiveExt = true;
+  bool receiveAXOScore = true;
 
   /*  *** Boards need redefining *****
     for (CItBoardMaps
@@ -624,6 +634,10 @@ void L1TGlobalProducer::produce(edm::Event& iEvent, const edm::EventSetup& evSet
   if (m_useMuonShowers)
     m_uGtBrd->receiveMuonShowerObjectData(iEvent, m_muShowerInputToken, receiveMuShower, m_nrL1MuShower);
 
+  //tell board to save axo scores when running GTL
+  if (m_saveAxoScore)
+    m_uGtBrd->enableAXOScoreSaving(receiveAXOScore);
+  
   m_uGtBrd->receiveExternalData(iEvent, m_extInputToken, receiveExt);
 
   // loop over BxInEvent
@@ -669,6 +683,10 @@ void L1TGlobalProducer::produce(edm::Event& iEvent, const edm::EventSetup& evSet
     }
 
   }  //End Loop over Bx
+
+  //save scores to score collection
+  if (m_saveAxoScore)
+    m_uGtBrd->receiveAXOScore(iEvent, m_axoInputToken, receiveAXOScore);
 
   // Add explicit reset of Board
   m_uGtBrd->reset();

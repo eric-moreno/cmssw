@@ -102,7 +102,7 @@ namespace l1t {
     edm::EDGetToken tauToken;
     edm::EDGetToken jetToken;
     edm::EDGetToken etsumToken;
-
+    
     std::vector<l1t::Muon> muonVec_bxm2;
     std::vector<l1t::Muon> muonVec_bxm1;
     std::vector<l1t::Muon> muonVec_bx0;
