@@ -207,6 +207,9 @@ L1TGlobalProducer::L1TGlobalProducer(const edm::ParameterSet& parSet)
     }
   }
 
+
+  m_saveAxoScore = true; //manually set for now
+
   // register products
   if (m_produceL1GtDaqRecord) {
     produces<GlobalAlgBlkBxCollection>();
@@ -215,6 +218,10 @@ L1TGlobalProducer::L1TGlobalProducer(const edm::ParameterSet& parSet)
 
   if (m_produceL1GtObjectMapRecord) {
     produces<GlobalObjectMapRecord>();
+  }
+
+  if (m_saveAxoScore) {
+    produces<AXOL1TLScoreBxCollection>();
   }
 
   // create new uGt Board
@@ -566,6 +573,9 @@ void L1TGlobalProducer::produce(edm::Event& iEvent, const edm::EventSetup& evSet
   // * produce the GlobalObjectMapRecord
   std::unique_ptr<GlobalObjectMapRecord> gtObjectMapRecord(new GlobalObjectMapRecord());
 
+  // if (m_saveAxoScore)
+  std::unique_ptr<AXOL1TLScoreBxCollection> uGtAXOScoreRecord(new AXOL1TLScoreBxCollection(minEmulBxInEvent, maxEmulBxInEvent));
+
   // fill the boards not depending on the BxInEvent in the L1 GT DAQ record
   // GMT, PSB and FDL depend on BxInEvent
 
@@ -635,8 +645,8 @@ void L1TGlobalProducer::produce(edm::Event& iEvent, const edm::EventSetup& evSet
     m_uGtBrd->receiveMuonShowerObjectData(iEvent, m_muShowerInputToken, receiveMuShower, m_nrL1MuShower);
 
   //tell board to save axo scores when running GTL
-  if (m_saveAxoScore)
-    m_uGtBrd->enableAXOScoreSaving(receiveAXOScore);
+  if (m_saveAxoScore){
+    m_uGtBrd->enableAXOScoreSaving(receiveAXOScore); }
   
   m_uGtBrd->receiveExternalData(iEvent, m_extInputToken, receiveExt);
 
@@ -682,11 +692,13 @@ void L1TGlobalProducer::produce(edm::Event& iEvent, const edm::EventSetup& evSet
                               m_l1GtMenu->gtTriggerMenuImplementation());
     }
 
+    //save scores to score collection
+    if (m_saveAxoScore){
+      std::cout << "fill axo score"<< std::endl;
+      m_uGtBrd->fillAXOScore(iBxInEvent, uGtAXOScoreRecord); }
+
   }  //End Loop over Bx
 
-  //save scores to score collection
-  if (m_saveAxoScore)
-    m_uGtBrd->receiveAXOScore(iEvent, m_axoInputToken, receiveAXOScore);
 
   // Add explicit reset of Board
   m_uGtBrd->reset();
@@ -727,6 +739,10 @@ void L1TGlobalProducer::produce(edm::Event& iEvent, const edm::EventSetup& evSet
 
   if (m_produceL1GtObjectMapRecord) {
     iEvent.put(std::move(gtObjectMapRecord));
+  }
+
+  if (m_saveAxoScore){
+    iEvent.put(std::move(uGtAXOScoreRecord));
   }
 }
 

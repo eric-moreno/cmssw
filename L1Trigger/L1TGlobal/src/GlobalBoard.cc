@@ -456,56 +456,27 @@ void l1t::GlobalBoard::receiveMuonShowerObjectData(const edm::Event& iEvent,
 }
 
 // receive axo score data
-void l1t::GlobalBoard::receiveAXOScore(const edm::Event& iEvent,
-				       const edm::EDGetTokenT<BXVector<AXOL1TLScore>>& axoInputToken,
-				       const bool receiveAXOScore) {
+void l1t::GlobalBoard::fillAXOScore(int iBxInEvent,
+				    std::unique_ptr<AXOL1TLScoreBxCollection>& AxoScoreRecord) {
+    
+  //set basic header info
+  m_uGtAXOScore.setbxInEventNr((iBxInEvent & 0xF));
 
-  resetAXO();
+  //save stored condition score if Bx is zero
+  float scorevalue = 0.0;
+  if (iBxInEvent == 0){
+    scorevalue = m_storedAXOScore; 
+  }
   
-  //only allow 1 axo score per BX
-  int nrAXOScores = 1;
-  float scorevalue = m_uGtBrdAXOScore; //stored score value in GlobalBoard
   if (scorevalue < 0.0){
     std::cout << "WARNING: Score not set in global board " << scorevalue << std::endl; 
   }
+
+  //set dataformat value
+  m_uGtAXOScore.setAXOScore(scorevalue);
   
-  // get data from Global Trigger
-  if (receiveAXOScore) {
-    edm::Handle<BXVector<AXOL1TLScore>> scoreData;
-    iEvent.getByToken(axoInputToken, scoreData);
-    if (!scoreData.isValid()) {
-      if (m_verbosity) {
-        edm::LogWarning("L1TGlobal") << "\nWarning: Input tag for the BXVector<l1t::AXOL1TLScore> collection"
-                                     << "\nrequested in configuration, but not found in the event.\n";
-      }
-    } else {
-      // Loop over bx in data
-      for (int i = scoreData->getFirstBX(); i <= scoreData->getLastBX(); ++i) {
-        // Prevent from pushing back bx that is outside of allowed range
-        if (i < m_bxFirst_ || i > m_bxLast_)
-          continue;
-
-       // Loop over scores in this bx (only 1)
-        int nObj = 0;
-        for (std::vector<AXOL1TLScore>::const_iterator sc = scoreData->begin(i); sc != scoreData->end(i); ++sc) {
-          if (nObj < nrAXOScores) {
-
-	    //set axoScore to score value using the same shared pointer strategy as muon showers
-	    std::shared_ptr<AXOL1TLScore> sharedSc = std::make_shared<AXOL1TLScore>(*sc);
-	    sharedSc->setAXOScore(scorevalue);
-	    // sc->setAXOScore(scorevalue);
-	    std::cout << "Set AXO Score: " << scorevalue << std::endl;
-            (*m_candAXOScore).push_back(i, &(*sc));
-
-          } else {
-            edm::LogWarning("L1TGlobal") << " Too many axo scores (" << nObj
-                                         << ") for uGT Configuration maxAXOScores =" << nrAXOScores;
-          }
-          nObj++;
-        }  //end loop over scores in bx
-      }    //end loop over bx
-    }      //end if over valid score data
-  }        //end if recievedata
+  std::cout << "filling score "<< m_storedAXOScore << " for Bx= "<< iBxInEvent<< std::endl;
+  AxoScoreRecord->push_back(iBxInEvent, m_uGtAXOScore);
 }
 
 
@@ -710,9 +681,9 @@ void l1t::GlobalBoard::runGTL(const edm::Event&,
           cMapResults[itCond->first] = axol1tlCondition;
 
 	  //for optional software-only saving of axol1tl score
-	  if (m_saveAXOScore && m_uGtBrdAXOScore < 0.0) {
-	    // m_uGtBrdAXOScore = 0.0;
-	    m_uGtBrdAXOScore = axol1tlCondition->getScore();
+	  if (m_saveAXOScore && m_storedAXOScore < 0.0) {
+	    // m_storedAXOScore = 0.0;
+	    m_storedAXOScore = axol1tlCondition->getScore();
 	    std::cout << "getting score from condition"<< std::endl;
 	  }
 	  
@@ -1213,7 +1184,8 @@ void l1t::GlobalBoard::reset() {
   resetCalo();
   resetExternal();
   // resetAXO(); 
-  m_uGtBrdAXOScore = -999.0;
+  m_storedAXOScore = -999.0;
+  m_uGtAXOScore.reset();
   
   m_uGtAlgBlk.reset();
 
@@ -1231,12 +1203,6 @@ void l1t::GlobalBoard::resetMu() {
 void l1t::GlobalBoard::resetMuonShower() {
   m_candL1MuShower->clear();
   m_candL1MuShower->setBXRange(m_bxFirst_, m_bxLast_);
-}
-
-//clear axo
-void l1t::GlobalBoard::resetAXO() {
-  m_candAXOScore->clear();
-  m_candAXOScore->setBXRange(m_bxFirst_, m_bxLast_);
 }
 
 // clear calo

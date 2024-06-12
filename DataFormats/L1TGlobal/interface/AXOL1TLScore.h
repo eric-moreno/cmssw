@@ -40,27 +40,39 @@ class AXOL1TLScore {
 public:
 
   //later add string for what model you are using per score?
+  //add bx? 
   
   /// constructors
   AXOL1TLScore(); //empty constructor
 		      
-  AXOL1TLScore(float score);
+  AXOL1TLScore(int bxNr, int bxInEvent);
   
   /// destructor
   virtual ~AXOL1TLScore();
   
-  ///set/get axo score
+  ///set/get axo score and other simple members
   void setAXOScore(float score) {axoscore_ = score;}
-    
-  float getAXOScore() const { return axoscore_; }
+  void setbxInEventNr(int bxNr) { m_bxInEvent = bxNr; }
+  void setL1FirmwareUUID(int fuuid) { m_bxNr = fuuid; }
+  
+  inline const float getAXOScore() const { return axoscore_; }
+  inline const int getbxInEventNr() const { return m_bxInEvent; }
+  inline const int getL1FirmwareUUID() const { return m_bxNr; }
+
+  void reset();
   
 private:
   
-  void reset();
     
   //axo score value
   float axoscore_;
-    
+
+  /// bunch cross number of the actual bx -> L1FirmwareUUID
+  int m_bxNr;
+
+  /// bunch cross in the GT event record (E,F,0,1,2)
+  int m_bxInEvent;
+
   //store version or type of network?
   // std::string nnversion; 
   

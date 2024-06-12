@@ -90,9 +90,8 @@ namespace l1t {
                                      const bool receiveMuShower,
                                      const int nrL1MuShower);
 
-    void receiveAXOScore(const edm::Event&,
-			 const edm::EDGetTokenT<BXVector<AXOL1TLScore>>&, 
-			 const bool receiveAXOScore);
+    void fillAXOScore(int iBxInEvent,
+		      std::unique_ptr<AXOL1TLScoreBxCollection>& AxoScoreRecord);
     
     void receiveExternalData(const edm::Event&, const edm::EDGetTokenT<BXVector<GlobalExtBlk>>&, const bool receiveExt);
 
@@ -179,8 +178,6 @@ namespace l1t {
     /// pointer to External data list
     inline const BXVector<const GlobalExtBlk*>* getCandL1External() const { return m_candL1External; }
 
-    ///pointer to axo data list
-    inline const BXVector<const AXOL1TLScore*>* getCandL1AXOScore() const { return m_candAXOScore; }
     
     /*  Drop individual EtSums for Now
     /// pointer to ETM data list
@@ -246,7 +243,6 @@ namespace l1t {
     BXVector<const l1t::EtSum*>* m_candL1EtSum;
     BXVector<const l1t::EtSum*>* m_candL1EtSumZdc;
     BXVector<const GlobalExtBlk*>* m_candL1External;
-    BXVector<const AXOL1TLScore*>* m_candAXOScore;
     //    BXVector<const l1t::EtSum*>* m_candETM;
     //    BXVector<const l1t::EtSum*>* m_candETT;
     //    BXVector<const l1t::EtSum*>* m_candHTM;
@@ -261,8 +257,9 @@ namespace l1t {
     GlobalAlgBlk m_uGtAlgBlk;
 
     //for optional software-only saving of axol1tl score
-    float m_uGtBrdAXOScore = -999.0;
-    bool m_saveAXOScore = true;
+    AXOL1TLScore m_uGtAXOScore; //score dataformat
+    float m_storedAXOScore = -999.0; //score from cond class
+    bool m_saveAXOScore = false;
     
     // cache of maps
     std::vector<AlgorithmEvaluation::ConditionEvaluationMap> m_conditionResultMaps;
