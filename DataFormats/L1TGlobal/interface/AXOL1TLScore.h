@@ -55,7 +55,7 @@ public:
   void setbxInEventNr(int bxNr) { m_bxInEvent = bxNr; }
   void setL1FirmwareUUID(int fuuid) { m_bxNr = fuuid; }
   
-  inline const float getAXOScore() const { return axoscore_; }
+  inline float const& getAXOScore() const { return axoscore_; }
   inline const int getbxInEventNr() const { return m_bxInEvent; }
   inline const int getL1FirmwareUUID() const { return m_bxNr; }
 

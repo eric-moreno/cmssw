@@ -40,8 +40,9 @@ private:
   edm::Service<TFileService> fs_;
 
   // pointers to the objects that will be stored as branches within the tree
-  float *anomaly_score;
-
+  // float const *anomaly_score;
+  float anomaly_score;
+  
   // tree
   TTree *tree_;
 
@@ -50,14 +51,15 @@ private:
 };
 
 L1AXOTreeProducer::L1AXOTreeProducer(edm::ParameterSet const &config)
-  :anomaly_score(nullptr),
+  // :anomaly_score(nullptr),
+  :anomaly_score(0.0f),
    tree_(nullptr),
    scoreToken_(consumes<AXOL1TLScoreBxCollection>(config.getUntrackedParameter<edm::InputTag>("axoscoreToken"))){
     
   usesResource(TFileService::kSharedResource);
   // set up the TTree and its branches
   tree_ = fs_->make<TTree>("L1AXOTree", "L1AXOTree");
-  tree_->Branch("axo_score", &anomaly_score, "f");
+  tree_->Branch("axo_score", &anomaly_score, "axo_score/F");
   // tree_->Branch("axo_score", "AXOL1TLScore", &anomaly_score, 32000, 3);
 }
 
@@ -69,17 +71,23 @@ L1AXOTreeProducer::L1AXOTreeProducer(edm::ParameterSet const &config)
 void L1AXOTreeProducer::analyze(edm::Event const &event, edm::EventSetup const &setup) {
 
   //save axo score
-  edm::Handle<AXOL1TLScoreBxCollection> nnex;
-  event.getByToken(scoreToken_, nnex);
+  edm::Handle<AXOL1TLScoreBxCollection> axo;
+  event.getByToken(scoreToken_, axo);
 
-  if (nnex.isValid()) {
-    *anomaly_score = nnex->at(0, 0).getAXOScore();
+  float const *ptr;
+
+  if (axo.isValid()) {
+    // anomaly_score = &axo->at(0, 0).getAXOScore();
+    ptr = &axo->at(0, 0).getAXOScore();
+    anomaly_score = *ptr;
+      
     std::cout << "ADDED AXO SCORE TO ROOTFILE: "<< anomaly_score <<std::endl;
 
   } else {
     edm::LogWarning("MissingProduct") << "AXOL1TLScoreBxCollection not found. Branch will not be filled" << std::endl;
   }
 
+  
   tree_->Fill();
 
 }

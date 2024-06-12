@@ -76,7 +76,8 @@ l1t::GlobalBoard::GlobalBoard()
       m_currentLumi(0),
       m_isDebugEnabled(edm::isDebugEnabled()) {
   m_uGtAlgBlk.reset();
-
+  m_uGtAXOScore.reset();
+  
   m_gtlAlgorithmOR.reset();
   m_gtlDecisionWord.reset();
 
@@ -133,7 +134,8 @@ void l1t::GlobalBoard::init(const int numberPhysTriggers,
   m_candL1External->setBXRange(m_bxFirst_, m_bxLast_);
 
   m_uGtAlgBlk.reset();
-
+  m_uGtAXOScore.reset();
+ 
   LogDebug("L1TGlobal") << "\t Initializing Board with bxFirst = " << m_bxFirst_ << ", bxLast = " << m_bxLast_;
 }
 
@@ -458,6 +460,8 @@ void l1t::GlobalBoard::receiveMuonShowerObjectData(const edm::Event& iEvent,
 // receive axo score data
 void l1t::GlobalBoard::fillAXOScore(int iBxInEvent,
 				    std::unique_ptr<AXOL1TLScoreBxCollection>& AxoScoreRecord) {
+
+  m_uGtAXOScore.reset();
     
   //set basic header info
   m_uGtAXOScore.setbxInEventNr((iBxInEvent & 0xF));
@@ -544,6 +548,8 @@ void l1t::GlobalBoard::runGTL(const edm::Event&,
   m_algFinalOr = false;
   m_algFinalOrVeto = false;
 
+  m_uGtAXOScore.reset();
+  
   const std::vector<std::vector<MuonTemplate>>& corrMuon = m_l1GtMenu->corMuonTemplate();
 
   const std::vector<std::vector<CaloTemplate>>& corrCalo = m_l1GtMenu->corCaloTemplate();

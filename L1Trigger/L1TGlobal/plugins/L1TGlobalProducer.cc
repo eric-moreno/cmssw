@@ -45,7 +45,7 @@ void L1TGlobalProducer::fillDescriptions(edm::ConfigurationDescriptions& descrip
       ->setComment("InputTag for Calo Trigger EGamma (required parameter:  default value is invalid)");
   desc.add<edm::InputTag>("TauInputTag", edm::InputTag(""))
       ->setComment("InputTag for Calo Trigger Tau (required parameter:  default value is invalid)");
-  desc.add<edm::InputTag>("JetInputTag", edm::InputTag(""))
+   desc.add<edm::InputTag>("JetInputTag", edm::InputTag(""))
       ->setComment("InputTag for Calo Trigger Jet (required parameter:  default value is invalid)");
   desc.add<edm::InputTag>("EtSumInputTag", edm::InputTag(""))
       ->setComment("InputTag for Calo Trigger EtSum (required parameter:  default value is invalid)");
@@ -74,7 +74,7 @@ void L1TGlobalProducer::fillDescriptions(edm::ConfigurationDescriptions& descrip
   desc.add<bool>("useMuonShowers", false);
 
   //switch for saving AXO score
-  desc.add<bool>("saveAxoScore", false);
+  desc.add<bool>("saveAxoScore", true);
   
   // disables resetting the prescale counters each lumisection (needed for offline)
   //  originally, the L1T firmware applied the reset of prescale counters at the end of every LS;
@@ -287,6 +287,8 @@ void L1TGlobalProducer::produce(edm::Event& iEvent, const edm::EventSetup& evSet
   // get / update the stable parameters from the EventSetup
   // local cache & check on cacheIdentifier
 
+  std::cout<< "produce new event "<< std::endl;
+  
   unsigned long long l1GtParCacheID = evSetup.get<L1TGlobalParametersRcd>().cacheIdentifier();
 
   if (m_l1GtParCacheID != l1GtParCacheID) {
@@ -699,7 +701,8 @@ void L1TGlobalProducer::produce(edm::Event& iEvent, const edm::EventSetup& evSet
 
   }  //End Loop over Bx
 
-
+  std::cout << " end loop over bx" << std::endl;
+  
   // Add explicit reset of Board
   m_uGtBrd->reset();
 
@@ -741,9 +744,11 @@ void L1TGlobalProducer::produce(edm::Event& iEvent, const edm::EventSetup& evSet
     iEvent.put(std::move(gtObjectMapRecord));
   }
 
+  std::cout <<"put axo score"<< std::endl;
   if (m_saveAxoScore){
     iEvent.put(std::move(uGtAXOScoreRecord));
   }
+  std::cout <<"end of event..."<< std::endl;
 }
 
 //define this as a plug-in
