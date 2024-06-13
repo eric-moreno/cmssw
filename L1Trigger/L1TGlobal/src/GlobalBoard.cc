@@ -466,7 +466,7 @@ void l1t::GlobalBoard::fillAXOScore(int iBxInEvent,
   //set basic header info
   m_uGtAXOScore.setbxInEventNr((iBxInEvent & 0xF));
 
-  //save stored condition score if Bx is zero
+  //save stored condition score if Bx is zero, else set to 0
   float scorevalue = 0.0;
   if (iBxInEvent == 0){
     scorevalue = m_storedAXOScore; 
