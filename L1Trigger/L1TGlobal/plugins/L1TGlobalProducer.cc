@@ -1,4 +1,4 @@
-// L1TGlobalProducer.cc
+ // L1TGlobalProducer.cc
 //author:   Brian Winer - Ohio State
 //          Vladimir Rekovic - extend for overlap removal
 //          Elisa Fontanesi - extended for three-body correlation conditions
@@ -208,7 +208,7 @@ L1TGlobalProducer::L1TGlobalProducer(const edm::ParameterSet& parSet)
   }
 
 
-  m_saveAxoScore = true; //manually set for now
+  // m_saveAxoScore = true; //manually set for now
 
   // register products
   if (m_produceL1GtDaqRecord) {
@@ -576,7 +576,7 @@ void L1TGlobalProducer::produce(edm::Event& iEvent, const edm::EventSetup& evSet
   std::unique_ptr<GlobalObjectMapRecord> gtObjectMapRecord(new GlobalObjectMapRecord());
 
   // if (m_saveAxoScore)
-  std::unique_ptr<AXOL1TLScoreBxCollection> uGtAXOScoreRecord(new AXOL1TLScoreBxCollection(maxEmulBxInEvent));
+  std::unique_ptr<AXOL1TLScoreBxCollection> uGtAXOScoreRecord(new AXOL1TLScoreBxCollection());
 
   // fill the boards not depending on the BxInEvent in the L1 GT DAQ record
   // GMT, PSB and FDL depend on BxInEvent

@@ -45,7 +45,9 @@ public:
   /// constructors
   AXOL1TLScore(); //empty constructor
 		      
-  AXOL1TLScore(int bxNr, int bxInEvent);
+  AXOL1TLScore(int bxInEvent);
+
+  AXOL1TLScore(int bxInEvent, float score);
   
   /// destructor
   virtual ~AXOL1TLScore();
@@ -61,13 +63,13 @@ public:
   
 private:
   
-    
-  //axo score value
-  float axoscore_;
-
   /// bunch cross in the GT event record (E,F,0,1,2)
   int m_bxInEvent;
 
+  //axo score value
+  float axoscore_;
+
+  
   //store version or type of network?
   // std::string nnversion; 
   
