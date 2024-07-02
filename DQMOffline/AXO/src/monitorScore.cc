@@ -13,7 +13,7 @@
 
 #include "monitorScore.h"
 
-DiMuonHistograms::DiMuonHistograms(const edm::ParameterSet& pSet) {
+monitorScore::monitorScore(const edm::ParameterSet& pSet) {
   // initialise parameters:
   parameters = pSet;
   theFolder = parameters.getParameter<string>("folder");
