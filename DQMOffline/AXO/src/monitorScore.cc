@@ -13,11 +13,13 @@
 
 #include "DQMOffline/AXO/interface/monitorScore.h"
 
+
 monitorScore::monitorScore(const edm::ParameterSet& pSet) {
   // initialise parameters:
   parameters = pSet;
   theFolder = parameters.getParameter<string>("folder");
 }
+monitorScore::~monitorScore() {}
 
 void monitorScore::bookHistograms(DQMStore::IBooker &iBooker, edm::Run const &, edm::EventSetup const &) {
   iBooker.setCurrentFolder(theFolder);
