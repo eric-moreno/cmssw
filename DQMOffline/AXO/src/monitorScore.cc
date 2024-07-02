@@ -28,7 +28,7 @@ void monitorScore::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
   edm::Handle<AXOL1TLScore> scoreHandle;
   iEvent.getByLabel("scoreProducer", scoreHandle);
   if (scoreHandle.isValid()) {
-    h_score->Fill(scoreHandle->getScore());
+    h_score->Fill(scoreHandle->getAXOScore());
   }
 }
 
