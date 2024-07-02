@@ -34,7 +34,7 @@ public:
 private:
   MonitorElement* h_score; // Histogram for score distribution
   std::string theFolder; // Folder for the histograms
-  
+  edm::ParameterSet parameters;
 
 protected:
   void bookHistograms(DQMStore::IBooker &iBooker, edm::Run const &, edm::EventSetup const &) override;
