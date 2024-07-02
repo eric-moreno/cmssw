@@ -97,6 +97,10 @@ autoDQM = { 'DQMMessageLogger': ['DQMMessageLoggerSeq',
                      'PostDQMOffline',
                      'DQMHarvestMuon+DQMCertMuon'],
 
+            'axo': ['DQMOfflineAXO',
+                    'PostDQMOffline',
+                    'dqmHarvesting'],
+            
             'hcal': ['DQMOfflineHcal',
                      'PostDQMOffline',
                      'DQMHarvestHcal'],

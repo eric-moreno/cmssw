@@ -278,6 +278,8 @@ DQMOfflineMuon = cms.Sequence( dtSources *
                                muonMonitors
                               )
 
+DQMOfflineAXO = cms.Sequence(AXOMonitor)
+
 _run3_GEM_DQMOfflineMuon = DQMOfflineMuon.copy()
 _run3_GEM_DQMOfflineMuon += gemSources
 run3_GEM.toReplaceWith(DQMOfflineMuon, _run3_GEM_DQMOfflineMuon)
