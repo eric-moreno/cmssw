@@ -1,6 +1,3 @@
-#ifndef monitorScore_H
-#define monitorScore_H
-
 // ╔═╗┬ ┬┌┬┐┬ ┬┌─┐┬─┐┌─┐                              
 // ╠═╣│ │ │ ├─┤│ │├┬┘└─┐                              
 // ╩ ╩└─┘ ┴ ┴ ┴└─┘┴└─└─┘                              
@@ -13,6 +10,9 @@
 // ╔╦╗┬┌─┐┌┬┐┌─┐┬─┐┬┌─┌─┐  ╔═╗┬ ┬┌─┐┬ ┬┌┬┐┬ ┬┬ ┬┬─┐┬ ┬
 //  ║║│├─┘ │ ├─┤├┬┘├┴┐│ │  ║  ├─┤│ ││ │ ││├─┤│ │├┬┘└┬┘
 // ═╩╝┴┴   ┴ ┴ ┴┴└─┴ ┴└─┘  ╚═╝┴ ┴└─┘└─┘─┴┘┴ ┴└─┘┴└─ ┴ 
+
+#ifndef monitorScore_H
+#define monitorScore_H
 
 #include <memory>
 #include <fstream>
@@ -33,19 +33,8 @@ private:
   
 
 protected:
-  void bookHistograms(DQMStore::IBooker &iBooker, edm::Run const &, edm::EventSetup const &) override {
-    iBooker.setCurrentFolder("Your/Path/Here");
-    h_score = iBooker.book1D("scoreHistogram", "Score Distribution", 100, 0, 100);
-  }
+  void bookHistograms(DQMStore::IBooker &iBooker, edm::Run const &, edm::EventSetup const &) override;
+  void analyze(const edm::Event &event, const edm::EventSetup &eventSetup) override;
 
-  void analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) override {
-    edm::Handle<AXOL1TLScore> scoreHandle;
-    iEvent.getByLabel("scoreProducer", scoreHandle);
-    if (scoreHandle.isValid()) {
-      h_score->Fill(scoreHandle->getScore());
-    }
-  }
 };
-
-// Necessary CMS framework macros
-DEFINE_FWK_MODULE(monitorScore);
+#endif
