@@ -11,13 +11,26 @@
 //  ║║│├─┘ │ ├─┤├┬┘├┴┐│ │  ║  ├─┤│ ││ │ ││├─┤│ │├┬┘└┬┘
 // ═╩╝┴┴   ┴ ┴ ┴┴└─┴ ┴└─┘  ╚═╝┴ ┴└─┘└─┘─┴┘┴ ┴└─┘┴└─ ┴ 
 
-#include "DQMOffline/AXO/interface/monitorScore.h"
-#include "FWCore/MessageLogger/interface/MessageLogger.h"
+#include "monitorScore.h"
 
-#include "DQMServices/Core/interface/DQMStore.h"
+DiMuonHistograms::DiMuonHistograms(const edm::ParameterSet& pSet) {
+  // initialise parameters:
+  parameters = pSet;
+  theFolder = parameters.getParameter<string>("folder");
+}
 
-#include <string>
-#include <TMath.h>
-using namespace std;
-using namespace edm;
+void monitorScore::bookHistograms(DQMStore::IBooker &iBooker, edm::Run const &, edm::EventSetup const &) {
+  iBooker.setCurrentFolder(theFolder);
+  h_score = iBooker.book1D("scoreHistogram", "Score Distribution", 100, 0, 100);
+}
 
+void monitorScore::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
+  edm::Handle<AXOL1TLScore> scoreHandle;
+  iEvent.getByLabel("scoreProducer", scoreHandle);
+  if (scoreHandle.isValid()) {
+    h_score->Fill(scoreHandle->getScore());
+  }
+}
+
+// Necessary CMS framework macros
+DEFINE_FWK_MODULE(monitorScore);
