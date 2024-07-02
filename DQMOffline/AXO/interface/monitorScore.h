@@ -27,6 +27,10 @@
 #include "DataFormats/L1TGlobal/interface/AXOL1TLScore.h"
 
 class monitorScore : public DQMEDAnalyzer {
+public:
+  monitorScore(const edm::ParameterSet &pset);
+  ~monitorScore() override;
+
 private:
   MonitorElement* h_score; // Histogram for score distribution
   std::string theFolder; // Folder for the histograms
