@@ -11,7 +11,7 @@
 //  ║║│├─┘ │ ├─┤├┬┘├┴┐│ │  ║  ├─┤│ ││ │ ││├─┤│ │├┬┘└┬┘
 // ═╩╝┴┴   ┴ ┴ ┴┴└─┴ ┴└─┘  ╚═╝┴ ┴└─┘└─┘─┴┘┴ ┴└─┘┴└─ ┴ 
 
-#include "monitorScore.h"
+#include "DQMOffline/AXO/interface/monitorScore.h"
 
 monitorScore::monitorScore(const edm::ParameterSet& pSet) {
   // initialise parameters:

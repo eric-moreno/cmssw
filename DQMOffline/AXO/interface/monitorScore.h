@@ -29,7 +29,7 @@
 class monitorScore : public DQMEDAnalyzer {
 private:
   MonitorElement* h_score; // Histogram for score distribution
-  sdt::string theFolder; // Folder for the histograms
+  std::string theFolder; // Folder for the histograms
   
 
 protected:
