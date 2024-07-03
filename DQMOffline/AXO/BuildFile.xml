@@ -9,6 +9,4 @@
 <use name="L1Trigger/L1TCommon"/>
 <use name="DataFormats/L1TGlobal"/>
 <use name="rootcore"/>
-<export>
-  <lib name="1"/>
-</export>
+<flags EDM_PLUGIN="1"/>

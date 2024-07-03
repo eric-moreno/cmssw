@@ -25,6 +25,7 @@
 #include "DQMServices/Core/interface/DQMEDAnalyzer.h"
 #include "DQMServices/Core/interface/MonitorElement.h"
 #include "DataFormats/L1TGlobal/interface/AXOL1TLScore.h"
+#include "DataFormats/Common/interface/Handle.h"
 
 class monitorScore : public DQMEDAnalyzer {
 public:
