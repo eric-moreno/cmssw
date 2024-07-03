@@ -278,11 +278,14 @@ DQMOfflineMuon = cms.Sequence( dtSources *
                                muonMonitors
                               )
 
-DQMOfflineAXO = cms.Sequence(AXOMonitor)
-
 _run3_GEM_DQMOfflineMuon = DQMOfflineMuon.copy()
 _run3_GEM_DQMOfflineMuon += gemSources
 run3_GEM.toReplaceWith(DQMOfflineMuon, _run3_GEM_DQMOfflineMuon)
+
+# AXOL1TL definition
+from DQMOffline.AXO.AXOAnalyzer_cff import *
+
+DQMOfflineAXO = cms.Sequence(AXOMonitor)
 
 #Taus not created in pp conditions for HI
 from Configuration.ProcessModifiers.pp_on_AA_cff import pp_on_AA
