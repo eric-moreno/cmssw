@@ -48,7 +48,7 @@ public:
   AXOL1TLScore(int bxInEvent);
 
   AXOL1TLScore(int bxInEvent, float score);
-  
+
   /// destructor
   virtual ~AXOL1TLScore();
   

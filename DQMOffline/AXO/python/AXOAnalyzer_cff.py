@@ -1,5 +1,5 @@
 import FWCore.ParameterSet.Config as cms
 
-from DQMOffline.AXO.monitorScore_cfi import *
+from DQMOffline.AXO.monitorScore_cfi import AXOScore
 
 AXOMonitor = cms.Sequence(AXOScore)

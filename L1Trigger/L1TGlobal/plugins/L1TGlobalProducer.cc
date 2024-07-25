@@ -208,7 +208,7 @@ L1TGlobalProducer::L1TGlobalProducer(const edm::ParameterSet& parSet)
   }
 
 
-  // m_saveAxoScore = true; //manually set for now
+  m_saveAxoScore = true; //manually set for now
 
   // register products
   if (m_produceL1GtDaqRecord) {

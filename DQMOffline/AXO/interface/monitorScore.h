@@ -1,16 +1,3 @@
-// ╔═╗┬ ┬┌┬┐┬ ┬┌─┐┬─┐┌─┐                              
-// ╠═╣│ │ │ ├─┤│ │├┬┘└─┐                              
-// ╩ ╩└─┘ ┴ ┴ ┴└─┘┴└─└─┘                              
-// ╔═╗┬─┐┬┌─┐  ╔╦╗┌─┐┬─┐┌─┐┌┐┌┌─┐                     
-// ║╣ ├┬┘││    ║║║│ │├┬┘├┤ ││││ │                     
-// ╚═╝┴└─┴└─┘  ╩ ╩└─┘┴└─└─┘┘└┘└─┘                     
-// ╦  ┬ ┬┬┌─┌─┐┌─┐  ╔═╗┌┐ ┌─┐┬  ┬┌┐┌┌─┐               
-// ║  │ │├┴┐├─┤└─┐  ║╣ ├┴┐├┤ │  │││││ ┬               
-// ╩═╝└─┘┴ ┴┴ ┴└─┘  ╚═╝└─┘└─┘┴─┘┴┘└┘└─┘               
-// ╔╦╗┬┌─┐┌┬┐┌─┐┬─┐┬┌─┌─┐  ╔═╗┬ ┬┌─┐┬ ┬┌┬┐┬ ┬┬ ┬┬─┐┬ ┬
-//  ║║│├─┘ │ ├─┤├┬┘├┴┐│ │  ║  ├─┤│ ││ │ ││├─┤│ │├┬┘└┬┘
-// ═╩╝┴┴   ┴ ┴ ┴┴└─┴ ┴└─┘  ╚═╝┴ ┴└─┘└─┘─┴┘┴ ┴└─┘┴└─ ┴ 
-
 #ifndef monitorScore_H
 #define monitorScore_H
 
@@ -25,11 +12,10 @@
 #include "DQMServices/Core/interface/DQMEDAnalyzer.h"
 #include "DQMServices/Core/interface/MonitorElement.h"
 #include "DataFormats/L1TGlobal/interface/AXOL1TLScore.h"
-#include "DataFormats/Common/interface/Handle.h"
 
 class monitorScore : public DQMEDAnalyzer {
 public:
-  monitorScore(const edm::ParameterSet &pset);
+  explicit monitorScore(const edm::ParameterSet &pset);
   ~monitorScore() override;
 
 private:
@@ -37,9 +23,13 @@ private:
   std::string theFolder; // Folder for the histograms
   edm::ParameterSet parameters;
 
+  // EDM input tokens
+  const edm::EDGetTokenT<AXOL1TLScoreBxCollection> scoreToken_;
+
 protected:
   void bookHistograms(DQMStore::IBooker &iBooker, edm::Run const &, edm::EventSetup const &) override;
   void analyze(const edm::Event &event, const edm::EventSetup &eventSetup) override;
-
+  void customEndJob(); // Custom end job function
 };
+
 #endif
